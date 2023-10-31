@@ -1464,8 +1464,16 @@ class RedisVectorStoreRetriever(VectorStoreRetriever):
 
     async def _aget_relevant_documents(
         self, query: str, *, run_manager: AsyncCallbackManagerForRetrieverRun
-    ) -> List[Document]:
-        raise NotImplementedError("RedisVectorStoreRetriever does not support async")
+        ) -> List[Document]:
+        if self.search_type == "similarity":
+            docs = await self.vectorstore.asimilarity_search(query, k=self.k)
+        elif self.search_type == "similarity_limit":
+            docs = await self.vectorstore.asimilarity_search_limit_score(
+                query, k=self.k, score_threshold=self.score_threshold
+            )
+        else:
+            raise ValueError(f"search_type of {self.search_type} not allowed.")
+        return docs
 
     def add_documents(self, documents: List[Document], **kwargs: Any) -> List[str]:
         """Add documents to vectorstore."""
