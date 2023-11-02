@@ -1466,7 +1466,7 @@ class RedisVectorStoreRetriever(VectorStoreRetriever):
         self, query: str, *, run_manager: AsyncCallbackManagerForRetrieverRun
         ) -> List[Document]:
         if self.search_type == "similarity":
-            docs = await self.vectorstore.asimilarity_search(query, k=self.k)
+            docs = await self.vectorstore.asimilarity_search(query, k=self.search_kwargs["k"])
         elif self.search_type == "similarity_limit":
             docs = await self.vectorstore.asimilarity_search_limit_score(
                 query, k=self.k, score_threshold=self.score_threshold
